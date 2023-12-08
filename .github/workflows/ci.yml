@@ -90,7 +90,7 @@ jobs:
           path: "adb-devices-prometheus-exporter-*"
         if: matrix.toolchain == 'stable'
       - name: Generate SHA-256
-        run: shasum -a 256 ${{ matrix.platform.name }}
+        run: shasum -a 256 ${{ matrix.platform.name }} | cut -d ' ' -f 1 > ${{ matrix.platform.name }}.sha256
         if: matrix.toolchain == 'stable' && matrix.platform.os == 'macOS-latest'
       - name: Release binary and SHA-256 checksum to GitHub
         uses: softprops/action-gh-release@v1
