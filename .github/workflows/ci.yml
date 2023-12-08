@@ -64,9 +64,9 @@ jobs:
         run: |
           cd target/${{ matrix.platform.target }}/release
           if [[ "${{ matrix.platform.os }}" == "windows-latest" ]]; then
-            7z a ../../../${{ matrix.platform.bin }} ${{ matrix.platform.archive }}
+            7z a ../../../${{ matrix.platform.archive }} ${{ matrix.platform.bin }}
           else
-            tar czvf ../../../${{ matrix.platform.bin }} ${{ matrix.platform.archive }}
+            tar czvf ../../../${{ matrix.platform.archive }} ${{ matrix.platform.bin }}
           fi
           cd -
       - name: Generate SHA-256
