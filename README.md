@@ -13,13 +13,16 @@ for macOS and Homebrew users
 ```
 brew tap windsekirun/tap
 brew install adb-devices-prometheus-exporter
+
+// manage by background service (launchctl on macos)
+brew services start adb-devices-prometheus-exporter
 ```
+
+access http://0.0.0.0:9001/metrics
 
 ## Build
 
 * cargo run
-
-access http://0.0.0.0:9001/metrics
 
 ## License
 MIT License
