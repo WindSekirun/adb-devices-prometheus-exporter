@@ -20,22 +20,27 @@ jobs:
             os: ubuntu-20.04
             target: aarch64-unknown-linux-musl
             bin: adb-devices-prometheus-exporter-linux-arm64
+            archive: adb-devices-prometheus-exporter-linux-arm64.tar.gz
           - os_name: Linux-x86_64
             os: ubuntu-20.04
             target: x86_64-unknown-linux-gnu
             bin: adb-devices-prometheus-exporter-linux-amd64
+            archive: adb-devices-prometheus-exporter-linux-amd64.tar.gz
           - os_name: Windows-x86_64
             os: windows-latest
             target: x86_64-pc-windows-msvc
             bin: adb-devices-prometheus-exporter-amd64.exe
+            archive: adb-devices-prometheus-exporter-amd64.zip
           - os_name: macOS-x86_64
             os: macOS-latest
             target: x86_64-apple-darwin
             bin: adb-devices-prometheus-exporter-darwin-amd64
+            archive: adb-devices-prometheus-exporter-darwin-amd64.tar.gz
           - os_name: macOS-aarch64
             os: macOS-latest
             target: aarch64-apple-darwin
             bin: adb-devices-prometheus-exporter-darwin-arm64
+            archive: adb-devices-prometheus-exporter-darwin-arm64.tar.gz
         toolchain:
           - stable
     steps:
@@ -48,17 +53,23 @@ jobs:
           toolchain: ${{ matrix.toolchain }}
           args: "--locked --release"
           strip: true
-      - name: Rename binary (linux and macos)
-        run: mv target/${{ matrix.platform.target }}/release/adb-devices-prometheus-exporter target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }}
-        if: matrix.platform.os_name != 'Windows-x86_64'
-      - name: Rename binary (windows)
-        run: mv target/${{ matrix.platform.target }}/release/adb-devices-prometheus-exporter.exe target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }}
-        if: matrix.platform.os_name == 'Windows-x86_64'
+      - name: Rename binary
+        run: mv target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }} target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }}
+      - name: Package as archive
+        shell: bash
+        run: |
+          cd target/${{ matrix.platform.target }}/release
+          if [[ "${{ matrix.platform.os }}" == "windows-latest" ]]; then
+            7z a ../../../${{ matrix.platform.bin }} ${{ matrix.platform.archive }}
+          else
+            tar czvf ../../../${{ matrix.platform.bin }} ${{ matrix.platform.archive }}
+          fi
+          cd -
       - name: Generate SHA-256
-        run: shasum -a 256 target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }} | cut -d ' ' -f 1 > target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }}.sha256
+        run: shasum -a 256 target/${{ matrix.platform.target }}/release/${{ matrix.platform.archive }} | cut -d ' ' -f 1 > target/${{ matrix.platform.target }}/release/${{ matrix.platform.archive }}.sha256
       - name: Release binary and SHA-256 checksum to GitHub
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }}
-            target/${{ matrix.platform.target }}/release/${{ matrix.platform.bin }}.sha256
+            target/${{ matrix.platform.target }}/release/${{ matrix.platform.archive }}
+            target/${{ matrix.platform.target }}/release/${{ matrix.platform.archive }}.sha256
