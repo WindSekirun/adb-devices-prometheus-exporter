@@ -4,14 +4,14 @@ use crate::{
 };
 
 fn kv(key: &str, value: &str) -> (String, String) {
-    return (key.to_owned(), value.to_owned());
+    return (key.to_string(), value.to_string());
 }
 
 pub fn add_total_device_metrics(device_infos: &[DeviceInfo]) -> String {
     let mut result: String = String::new();
 
     let total_device = PrometheusMetricsBuilder::default()
-        .key("connected_android_device".to_owned())
+        .key("connected_android_device".to_string())
         .value(device_infos.len())
         .metric_type("gauge")
         .help_str("Information about Android devices connected to the host.")
@@ -27,7 +27,7 @@ pub fn add_total_device_metrics(device_infos: &[DeviceInfo]) -> String {
         label_vectors.push(kv("state", &device.state));
 
         let each_metrics = PrometheusMetricsBuilder::default()
-            .key("connected_android_device".to_owned())
+            .key("connected_android_device".to_string())
             .value(1)
             .label(label_vectors)
             .build()
