@@ -1,5 +1,4 @@
 cat > ~/Library/LaunchAgents/com.github.windsekirun.adb-devices-prometheus-exporter.plist <<EOF
-
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
@@ -32,8 +31,8 @@ cat > ~/Library/LaunchAgents/com.github.windsekirun.adb-devices-prometheus-expor
 	<true/>
 </dict>
 </plist>
-
 EOF
 
-launchctl load ~/Library/LaunchAgents/com.github.windsekirun.adb-devices-prometheus-exporter.plist
+launchctl unload -w ~/Library/LaunchAgents/com.github.windsekirun.adb-devices-prometheus-exporter.plist
+launchctl load -w ~/Library/LaunchAgents/com.github.windsekirun.adb-devices-prometheus-exporter.plist
 launchctl start com.github.windsekirun.adb-devices-prometheus-exporter
