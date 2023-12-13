@@ -40,7 +40,13 @@ connected_android_device_state_fastbootd 0
 # HELP connected_android_device_state_bootloader Number of Android devices connected in 'bootloader' status
 # TYPE connected_android_device_state_bootloader gauge
 connected_android_device_state_bootloader 0
+
+# HELP connected_android_device_state_filtered Number of Android devices connected in 'FILTERED' status
+# TYPE connected_android_device_state_filtered gauge
+connected_android_device_state_filtered 0
 ```
+
+* `connected_android_device_state_filtered` is available with -f options in v0.2.1 or newer
 
 ## Usage
 
@@ -65,6 +71,9 @@ brew install adb-devices-prometheus-exporter
 
 // manage by background service (launchctl on macos)
 brew services start adb-devices-prometheus-exporter
+
+// or, use launchctl instead
+sh install-plist-macos.sh
 ```
 
 access http://0.0.0.0:9001/metrics

@@ -47,8 +47,10 @@ pub fn add_device_metrics_state(device_infos: &[DeviceInfo], state: &str) -> Str
         .filter(|device| device.state == state)
         .count();
 
+    let lowercase_state = state.to_ascii_lowercase();
+
     let gauge = PrometheusMetricsBuilder::default()
-        .key(format!("connected_android_device_state_{state}"))
+        .key(format!("connected_android_device_state_{lowercase_state}"))
         .value(value)
         .metric_type("gauge")
         .help_str(format!(

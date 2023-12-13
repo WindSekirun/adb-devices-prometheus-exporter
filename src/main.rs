@@ -49,5 +49,6 @@ async fn metrics() -> String {
     result.push_str(&add_device_metrics_state(&device_infos, "offline"));
     result.push_str(&add_device_metrics_state(&device_infos, "fastbootd"));
     result.push_str(&add_device_metrics_state(&device_infos, "bootloader"));
+    result.push_str(&add_device_metrics_state(&device_infos, "FILTERED"));
     return result;
 }
