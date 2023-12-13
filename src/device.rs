@@ -5,8 +5,9 @@ use std::{
 };
 
 lazy_static! {
-    static ref ADB_DEVICES_PATTERN: Regex = Regex::new(r"(\S+)\s+(device|offline|recovery|fastbootd|sideload|unauthorized|disconnected|bootloader)\s+usb:(\S+)\s+product:(\S+)\s+model:(\S+)\s+device:(\S+)\s+transport_id:(\S+)").unwrap();
+    static ref ADB_DEVICES_PATTERN: Regex = Regex::new(r"(\S+)\s+(device|offline|recovery|fastbootd|sideload|unauthorized|disconnected|bootloader)?\s*usb:(\S+)\s(?:product:(\S+)\s+)?(?:model:(\S+)\s+)?(?:device:(\S+)\s+)?transport_id:(\S+)").unwrap();
 }
+
 pub struct DeviceInfo {
     pub serial: String,
     pub state: String,
@@ -27,9 +28,9 @@ pub fn get_device_list() -> Vec<DeviceInfo> {
         .iter()
         .filter_map(|line| ADB_DEVICES_PATTERN.captures(line))
         .map(|captures| DeviceInfo {
-            serial: captures[1].to_string(),
-            state: captures[2].to_string(),
-            model: captures[5].to_string(),
+            serial: captures.get(1).map_or("", |m| m.as_str()).to_string(),
+            state: captures.get(2).map_or("", |m| m.as_str()).to_string(),
+            model: captures.get(5).map_or("", |m| m.as_str()).to_string(),
         })
         .collect();
 
