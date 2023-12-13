@@ -4,10 +4,59 @@
 Prometheus exporter for expose 'adb devices' on host
 
 ## Metrics
-* connected_android_device guage
-* connected_android_device_state_(device|unauthorized|disconnected|sideload|recovery|offline|fastbood|bootloader) gauge
+```
+# HELP connected_android_device Information about Android devices connected to the host.
+# TYPE connected_android_device gauge
+connected_android_device 0
+
+# HELP connected_android_device_state_device Number of Android devices connected in 'device' status
+# TYPE connected_android_device_state_device gauge
+connected_android_device_state_device 0
+
+# HELP connected_android_device_state_unauthorized Number of Android devices connected in 'unauthorized' status
+# TYPE connected_android_device_state_unauthorized gauge
+connected_android_device_state_unauthorized 0
+
+# HELP connected_android_device_state_disconnected Number of Android devices connected in 'disconnected' status
+# TYPE connected_android_device_state_disconnected gauge
+connected_android_device_state_disconnected 0
+
+# HELP connected_android_device_state_sideload Number of Android devices connected in 'sideload' status
+# TYPE connected_android_device_state_sideload gauge
+connected_android_device_state_sideload 0
+
+# HELP connected_android_device_state_recovery Number of Android devices connected in 'recovery' status
+# TYPE connected_android_device_state_recovery gauge
+connected_android_device_state_recovery 0
+
+# HELP connected_android_device_state_offline Number of Android devices connected in 'offline' status
+# TYPE connected_android_device_state_offline gauge
+connected_android_device_state_offline 0
+
+# HELP connected_android_device_state_fastbootd Number of Android devices connected in 'fastbootd' status
+# TYPE connected_android_device_state_fastbootd gauge
+connected_android_device_state_fastbootd 0
+
+# HELP connected_android_device_state_bootloader Number of Android devices connected in 'bootloader' status
+# TYPE connected_android_device_state_bootloader gauge
+connected_android_device_state_bootloader 0
+```
 
 ## Usage
+
+```
+Prometheus exporter for monitoring adb devices
+
+Usage: adb-devices-prometheus-exporter [OPTIONS]
+
+Options:
+  -p <PORT>                       Port to listening metrics endpoint [default: 9001]
+  -f, --filter-commend-available  Filtering devices that are in 'device' status but cannot be used
+  -h, --help                      Print help
+  -V, --version                   Print version
+```
+
+### Install
 
 for macOS and Homebrew users
 ```
