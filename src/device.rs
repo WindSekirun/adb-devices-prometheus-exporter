@@ -1,7 +1,6 @@
 use clap::Parser;
 use regex::Regex;
 use std::{
-    io::{BufRead, BufReader},
     process::{Command, Stdio},
     time::Duration,
 };
@@ -21,15 +20,33 @@ pub struct DeviceInfo {
 }
 
 pub fn get_device_list() -> Vec<DeviceInfo> {
-    let output = Command::new("adb")
+    let mut child = Command::new("adb")
         .arg("devices")
         .arg("-l")
         .stdout(Stdio::piped())
         .spawn()
         .expect("Failed to execute command");
 
-    let reader = BufReader::new(output.stdout.unwrap());
-    let lines: Vec<String> = reader.lines().map(|l| l.unwrap()).collect();
+    let one_sec = Duration::from_secs(5);
+
+    let output = match child
+        .wait_timeout(one_sec)
+        .expect("Failed to wait for adb command")
+    {
+        Some(status) if status.success() => {
+            child.wait_with_output().expect("Failed to read stdout")
+        }
+        Some(_) | None => {
+            child
+                .kill()
+                .expect("Command wasn't running or couldn't be killed");
+            return Vec::new(); // Exit code was not 0 or timeout happened, return empty Vec
+        }
+    };
+
+    let output_str = String::from_utf8(output.stdout).expect("Failed to convert stdout to String");
+
+    let lines: Vec<String> = output_str.lines().map(|l| l.to_string()).collect();
     let device_infos: Vec<DeviceInfo> = lines
         .iter()
         .filter_map(|line| ADB_DEVICES_PATTERN.captures(line))
