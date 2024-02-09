@@ -9,7 +9,10 @@ use wait_timeout::ChildExt;
 use crate::cli;
 
 lazy_static! {
+    // adb version 33.0.3-8952118
     static ref ADB_DEVICES_PATTERN: Regex = Regex::new(r"(\S+)\s+(device|offline|recovery|fastbootd|sideload|unauthorized|disconnected|bootloader)?\s*usb:(\S+)\s(?:product:(\S+)\s+)?(?:model:(\S+)\s+)?(?:device:(\S+)\s+)?transport_id:(\S+)").unwrap();
+    // adb_version 34.0.5-10900879
+    static ref ADB_DEVICES_PATTERN_34: Regex = Regex::new(r"(\S+)\s+(device|offline|recovery|fastbootd|sideload|unauthorized|disconnected|bootloader)?\s*(\S+)\s(?:product:(\S+)\s+)?(?:model:(\S+)\s+)?(?:device:(\S+)\s+)?transport_id:(\S+)").unwrap();
 }
 
 #[derive(Clone)]
@@ -49,11 +52,15 @@ pub fn get_device_list() -> Vec<DeviceInfo> {
     let lines: Vec<String> = output_str.lines().map(|l| l.to_string()).collect();
     let device_infos: Vec<DeviceInfo> = lines
         .iter()
-        .filter_map(|line| ADB_DEVICES_PATTERN.captures(line))
-        .map(|captures| DeviceInfo {
-            serial: captures.get(1).map_or("", |m| m.as_str()).to_string(),
-            state: captures.get(2).map_or("", |m| m.as_str()).to_string(),
-            model: captures.get(5).map_or("", |m| m.as_str()).to_string(),
+        .filter_map(|line| {
+            ADB_DEVICES_PATTERN
+                .captures(line)
+                .or_else(|| ADB_DEVICES_PATTERN_34.captures(line))
+                .map(|captures| DeviceInfo {
+                    serial: captures.get(1).map_or("", |m| m.as_str()).to_string(),
+                    state: captures.get(2).map_or("", |m| m.as_str()).to_string(),
+                    model: captures.get(5).map_or("", |m| m.as_str()).to_string(),
+                })
         })
         .map(|info| check_command_available(&info))
         .collect();
